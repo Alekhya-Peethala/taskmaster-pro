@@ -1,0 +1,27 @@
+# TaskMaster Pro - Frontend Prettier Configuration
+# Generated with GitHub Copilot assistance
+
+# Indentation and line width
+printWidth: 100
+tabWidth: 2
+useTabs: false
+
+# Quotes and semicolons
+singleQuote: true
+semi: true
+
+# Trailing commas
+trailingComma: es5
+
+# Brackets and spacing
+bracketSpacing: true
+arrowParens: avoid
+
+# Line endings
+endOfLine: lf
+
+# File-specific overrides
+overrides:
+  - files: "*.html"
+    options:
+      parser: angular

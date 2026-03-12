@@ -1,0 +1,107 @@
+# TaskMaster Pro - Root .gitignore
+# Generated: 2026-03-12
+
+# ============================================================================
+# Environment & Secrets
+# ============================================================================
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.pfx
+secrets/
+credentials/
+
+# ============================================================================
+# IDE & Editor
+# ============================================================================
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# JetBrains IDEs
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# ============================================================================
+# Operating System
+# ============================================================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.directory
+
+# ============================================================================
+# Logs & Temporary Files
+# ============================================================================
+*.log
+*.log.*
+logs/
+*.tmp
+*.temp
+*.cache
+
+# ============================================================================
+# Build Artifacts & Dependencies (will be refined in subdirectories)
+# ============================================================================
+dist/
+build/
+out/
+target/
+
+# ============================================================================
+# Azure & Infrastructure
+# ============================================================================
+*.publish.xml
+*.publishsettings
+.azure/
+*.azurePubxml
+
+# ============================================================================
+# Docker
+# ============================================================================
+.dockerignore
+docker-compose.override.yml
+
+# ============================================================================
+# Testing & Coverage
+# ============================================================================
+coverage/
+.coverage
+*.cover
+htmlcov/
+.pytest_cache/
+.nyc_output/
+
+# ============================================================================
+# Notes
+# ============================================================================
+# Backend-specific patterns (Python, pip, venv) managed in backend/.gitignore
+# Frontend-specific patterns (node_modules, Angular) managed in frontend/.gitignore

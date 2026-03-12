@@ -1,0 +1,17 @@
+/**
+ * TaskMaster Pro - Task Card Styles
+ * Generated with GitHub Copilot assistance
+ * Component-specific styles for task cards
+ * Constitution: Mobile-First Design (Principle III)
+ */
+
+// Additional component-specific styles
+// Most styling is handled via TailwindCSS utility classes in the template
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

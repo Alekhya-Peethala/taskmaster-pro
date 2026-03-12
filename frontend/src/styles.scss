@@ -1,0 +1,24 @@
+/* TaskMaster Pro - Global Styles */
+/* Generated with GitHub Copilot assistance */
+/* Mobile-first responsive design per Constitution Principle IV */
+
+/* TailwindCSS Base, Components, and Utilities */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global mobile-first base styles */
+@layer base {
+  html {
+    @apply text-base;
+  }
+  
+  body {
+    @apply min-h-screen bg-gray-50 text-gray-900;
+  }
+  
+  /* Ensure minimum touch target size: 44x44px */
+  button, a, input[type="checkbox"] {
+    @apply min-w-touch min-h-touch;
+  }
+}
