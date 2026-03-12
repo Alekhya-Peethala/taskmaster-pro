@@ -44,7 +44,23 @@ class TaskBase(BaseModel):
         ...,
         description="Current state of the task"
     )
-    
+
+
+class TaskCreate(TaskBase):
+    """
+    Schema for creating a new task (POST /api/tasks).
+    Inherits all fields from TaskBase and enforces future-only due dates.
+
+    Example:
+        {
+            "title": "Deploy to production",
+            "description": "Deploy v2.1.0 to production environment",
+            "due_date": "2026-03-20",
+            "priority": "High",
+            "status": "Pending"
+        }
+    """
+
     @field_validator('due_date')
     @classmethod
     def validate_due_date(cls, v: date) -> date:
@@ -55,23 +71,6 @@ class TaskBase(BaseModel):
         if v < date.today():
             raise ValueError('Due date cannot be in the past')
         return v
-
-
-class TaskCreate(TaskBase):
-    """
-    Schema for creating a new task (POST /api/tasks).
-    Inherits all fields from TaskBase.
-    
-    Example:
-        {
-            "title": "Deploy to production",
-            "description": "Deploy v2.1.0 to production environment",
-            "due_date": "2026-03-20",
-            "priority": "High",
-            "status": "Pending"
-        }
-    """
-    pass
 
 
 class TaskUpdate(BaseModel):
@@ -122,9 +121,7 @@ class TaskResponse(TaskBase):
     created_at: datetime
     updated_at: datetime
     
-    class Config:
-        """Pydantic configuration to enable ORM mode for SQLAlchemy models."""
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 
 class TaskStatusUpdate(BaseModel):
