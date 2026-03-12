@@ -1,0 +1,103 @@
+<!--
+  TaskMaster Pro - Task Card Template
+  Generated with GitHub Copilot assistance
+  Mobile-first responsive task card with priority styling
+  Constitution: Mobile-First Design (Principle III), Accessibility (Principle VI)
+-->
+
+<div 
+  class="bg-white rounded-lg shadow-md p-4 border-l-4 transition-all hover:shadow-lg"
+  [ngClass]="getPriorityClass()"
+  role="article"
+  [attr.aria-label]="'Task: ' + task.title"
+>
+  <!-- Task Header with Status Badge -->
+  <div class="flex flex-col xs:flex-row xs:justify-between xs:items-start gap-2 mb-3">
+    <h3 class="text-lg font-semibold text-gray-800 flex-1">
+      {{ task.title }}
+    </h3>
+    <span 
+      class="px-3 py-1 rounded-full text-xs font-medium self-start xs:self-auto"
+      [ngClass]="getStatusClass()"
+      role="status"
+    >
+      {{ task.status }}
+    </span>
+  </div>
+
+  <!-- Task Description -->
+  <p class="text-gray-600 text-sm mb-4 line-clamp-2" *ngIf="task.description">
+    {{ task.description }}
+  </p>
+
+  <!-- Task Metadata -->
+  <div class="flex flex-col xs:flex-row xs:items-center gap-2 mb-4 text-sm text-gray-500">
+    <!-- Due Date with Overdue Warning -->
+    <div class="flex items-center gap-1">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      </svg>
+      <span [ngClass]="{ 'text-red-600 font-semibold': isOverdue() }">
+        {{ formatDate(task.dueDate) }}
+        <span *ngIf="isOverdue()" class="text-red-600 font-bold ml-1">(Overdue)</span>
+      </span>
+    </div>
+
+    <!-- Priority Indicator -->
+    <div class="flex items-center gap-1">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12" />
+      </svg>
+      <span>{{ task.priority }}</span>
+    </div>
+  </div>
+
+  <!-- Quick Status Checkbox (User Story 3) -->
+  <div class="flex items-center mb-4 p-2 bg-gray-50 rounded">
+    <label class="flex items-center cursor-pointer gap-2 flex-1">
+      <input 
+        type="checkbox"
+        [checked]="task.status === 'Completed'"
+        (change)="onStatusToggle($event)"
+        class="w-5 h-5 rounded border-gray-300 text-status-completed focus:ring-2 focus:ring-status-completed focus:ring-offset-2"
+        [attr.aria-label]="'Mark task ' + task.title + ' as ' + (task.status === 'Completed' ? 'incomplete' : 'complete')"
+      />
+      <span class="text-sm text-gray-700">
+        {{ task.status === 'Completed' ? 'Completed' : 'Mark as complete' }}
+      </span>
+    </label>
+  </div>
+
+  <!-- Action Buttons (User Story 4) -->
+  <div class="flex gap-2">
+    <!-- Edit Button -->
+    <button 
+      type="button"
+      (click)="onEdit()"
+      class="flex-1 min-h-touch min-w-touch px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      [attr.aria-label]="'Edit task ' + task.title"
+    >
+      <span class="flex items-center justify-center gap-1">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+        </svg>
+        Edit
+      </span>
+    </button>
+
+    <!-- Delete Button -->
+    <button 
+      type="button"
+      (click)="onDelete()"
+      class="flex-1 min-h-touch min-w-touch px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+      [attr.aria-label]="'Delete task ' + task.title"
+    >
+      <span class="flex items-center justify-center gap-1">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+        Delete
+      </span>
+    </button>
+  </div>
+</div>
