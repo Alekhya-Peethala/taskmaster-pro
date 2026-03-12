@@ -20,3 +20,8 @@ services:
           run: ./hooks/prepackage.sh
           interactive: false
           continueOnError: false
+        windows:
+          shell: pwsh
+          run: ./hooks/prepackage.ps1
+          interactive: false
+          continueOnError: false
