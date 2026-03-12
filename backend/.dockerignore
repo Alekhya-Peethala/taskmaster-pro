@@ -1,0 +1,40 @@
+# TaskMaster Pro - Backend Docker ignore file
+# Excludes files that are not needed inside the container image
+
+# Python byte-code / cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Testing artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+tests/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Alembic history is run as a separate migration step, not baked into the image
+# (keep alembic/ itself so migration scripts are available at runtime)
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
