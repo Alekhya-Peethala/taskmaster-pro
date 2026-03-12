@@ -1,0 +1,468 @@
+openapi: 3.0.3
+info:
+  title: TaskMaster Pro API
+  description: |
+    RESTful API for TaskMaster Pro task management application.
+    
+    This API provides CRUD operations for tasks with support for:
+    - Creating, retrieving, updating, and deleting tasks
+    - Filtering tasks by status (Pending, In Progress, Completed)
+    - Task attributes: title, description, due date, priority, status
+    
+    **Contract Compliance**: This specification is immutable per Constitution Principle V.
+    Changes require API versioning and migration plan.
+    
+    **Generated**: 2026-03-12
+    **Branch**: 001-taskmaster-core
+  version: 1.0.0
+  contact:
+    name: TaskMaster Pro Development Team
+servers:
+  - url: http://localhost:8000
+    description: Local development server
+  - url: https://taskmaster-api.azurecontainerapps.io
+    description: Production Azure Container Apps endpoint
+tags:
+  - name: tasks
+    description: Task CRUD operations
+paths:
+  /api/tasks:
+    get:
+      summary: Retrieve all tasks
+      description: |
+        Returns a list of all tasks. Supports optional filtering by status via query parameter.
+        Results are ordered by due date ascending.
+      operationId: getTasks
+      tags:
+        - tasks
+      parameters:
+        - name: status
+          in: query
+          description: Filter tasks by status
+          required: false
+          schema:
+            type: string
+            enum:
+              - Pending
+              - In Progress
+              - Completed
+          example: Pending
+      responses:
+        '200':
+          description: Successful response with array of tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TaskResponse'
+              examples:
+                allTasks:
+                  summary: All tasks (no filter)
+                  value:
+                    - id: 1
+                      title: "Complete project proposal"
+                      description: "Finalize the Q2 project proposal document"
+                      dueDate: "2026-03-15"
+                      priority: "High"
+                      status: "In Progress"
+                      reminderSent: false
+                      createdAt: "2026-03-10T14:30:00Z"
+                      updatedAt: "2026-03-12T09:15:00Z"
+                    - id: 2
+                      title: "Review code changes"
+                      description: "Review PR #42 for backend refactoring"
+                      dueDate: "2026-03-13"
+                      priority: "Medium"
+                      status: "Pending"
+                      reminderSent: true
+                      createdAt: "2026-03-11T10:00:00Z"
+                      updatedAt: "2026-03-11T10:00:00Z"
+                pendingOnly:
+                  summary: Filtered by Pending status
+                  value:
+                    - id: 2
+                      title: "Review code changes"
+                      description: "Review PR #42 for backend refactoring"
+                      dueDate: "2026-03-13"
+                      priority: "Medium"
+                      status: "Pending"
+                      reminderSent: true
+                      createdAt: "2026-03-11T10:00:00Z"
+                      updatedAt: "2026-03-11T10:00:00Z"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Create a new task
+      description: |
+        Creates a new task with the provided details. All fields are required.
+        Returns the created task with generated ID and timestamps.
+      operationId: createTask
+      tags:
+        - tasks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskCreate'
+            examples:
+              newTask:
+                summary: Create a high-priority task
+                value:
+                  title: "Deploy to production"
+                  description: "Deploy v2.1.0 to production environment"
+                  dueDate: "2026-03-20"
+                  priority: "High"
+                  status: "Pending"
+      responses:
+        '201':
+          description: Task created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskResponse'
+              example:
+                id: 3
+                title: "Deploy to production"
+                description: "Deploy v2.1.0 to production environment"
+                dueDate: "2026-03-20"
+                priority: "High"
+                status: "Pending"
+                reminderSent: false
+                createdAt: "2026-03-12T15:45:00Z"
+                updatedAt: "2026-03-12T15:45:00Z"
+        '400':
+          description: Invalid request body (validation error)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              example:
+                detail:
+                  - loc: ["body", "title"]
+                    msg: "field required"
+                    type: "value_error.missing"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/tasks/{id}:
+    get:
+      summary: Retrieve a task by ID
+      description: Returns a single task identified by its unique ID.
+      operationId: getTaskById
+      tags:
+        - tasks
+      parameters:
+        - name: id
+          in: path
+          description: Task ID
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          example: 1
+      responses:
+        '200':
+          description: Successful response with task details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskResponse'
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                detail: "Task with id 999 not found"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      summary: Update an existing task
+      description: |
+        Updates all fields of an existing task (full resource update).
+        Partial updates are not supported - all fields must be provided.
+      operationId: updateTask
+      tags:
+        - tasks
+      parameters:
+        - name: id
+          in: path
+          description: Task ID
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskUpdate'
+            examples:
+              updateStatus:
+                summary: Update task to completed status
+                value:
+                  title: "Complete project proposal"
+                  description: "Finalize the Q2 project proposal document"
+                  dueDate: "2026-03-15"
+                  priority: "High"
+                  status: "Completed"
+      responses:
+        '200':
+          description: Task updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskResponse'
+        '400':
+          description: Invalid request body (validation error)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                detail: "Task with id 999 not found"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: Delete a task
+      description: |
+        Permanently deletes a task identified by its ID.
+        This operation cannot be undone. Frontend should show confirmation modal before calling.
+      operationId: deleteTask
+      tags:
+        - tasks
+      parameters:
+        - name: id
+          in: path
+          description: Task ID
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          example: 1
+      responses:
+        '204':
+          description: Task deleted successfully (no content returned)
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                detail: "Task with id 999 not found"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    TaskCreate:
+      type: object
+      required:
+        - title
+        - description
+        - dueDate
+        - priority
+        - status
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 255
+          description: Short, descriptive task title
+          example: "Complete project proposal"
+        description:
+          type: string
+          minLength: 1
+          maxLength: 65535
+          description: Detailed explanation of the task
+          example: "Finalize the Q2 project proposal document and submit for review"
+        dueDate:
+          type: string
+          format: date
+          description: Task due date in YYYY-MM-DD format
+          example: "2026-03-15"
+        priority:
+          type: string
+          enum:
+            - Low
+            - Medium
+            - High
+          description: Task priority level
+          example: "High"
+        status:
+          type: string
+          enum:
+            - Pending
+            - In Progress
+            - Completed
+          description: Current task status
+          example: "Pending"
+    TaskUpdate:
+      type: object
+      required:
+        - title
+        - description
+        - dueDate
+        - priority
+        - status
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 255
+          description: Short, descriptive task title
+          example: "Complete project proposal"
+        description:
+          type: string
+          minLength: 1
+          maxLength: 65535
+          description: Detailed explanation of the task
+          example: "Finalize the Q2 project proposal document and submit for review"
+        dueDate:
+          type: string
+          format: date
+          description: Task due date in YYYY-MM-DD format
+          example: "2026-03-15"
+        priority:
+          type: string
+          enum:
+            - Low
+            - Medium
+            - High
+          description: Task priority level
+          example: "High"
+        status:
+          type: string
+          enum:
+            - Pending
+            - In Progress
+            - Completed
+          description: Current task status
+          example: "Completed"
+    TaskResponse:
+      type: object
+      required:
+        - id
+        - title
+        - description
+        - dueDate
+        - priority
+        - status
+        - reminderSent
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: integer
+          description: Unique task identifier (auto-generated)
+          example: 1
+        title:
+          type: string
+          minLength: 1
+          maxLength: 255
+          description: Short, descriptive task title
+          example: "Complete project proposal"
+        description:
+          type: string
+          minLength: 1
+          maxLength: 65535
+          description: Detailed explanation of the task
+          example: "Finalize the Q2 project proposal document and submit for review"
+        dueDate:
+          type: string
+          format: date
+          description: Task due date in YYYY-MM-DD format
+          example: "2026-03-15"
+        priority:
+          type: string
+          enum:
+            - Low
+            - Medium
+            - High
+          description: Task priority level
+          example: "High"
+        status:
+          type: string
+          enum:
+            - Pending
+            - In Progress
+            - Completed
+          description: Current task status
+          example: "In Progress"
+        reminderSent:
+          type: boolean
+          description: Whether 24-hour reminder has been sent for this task
+          example: false
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when task was created (ISO 8601)
+          example: "2026-03-10T14:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp of last task modification (ISO 8601)
+          example: "2026-03-12T09:15:00Z"
+    Error:
+      type: object
+      required:
+        - detail
+      properties:
+        detail:
+          type: string
+          description: Human-readable error message
+          example: "Task with id 999 not found"
+    ValidationError:
+      type: object
+      required:
+        - detail
+      properties:
+        detail:
+          type: array
+          items:
+            type: object
+            properties:
+              loc:
+                type: array
+                items:
+                  type: string
+                description: Location of the validation error (path in request body)
+                example: ["body", "title"]
+              msg:
+                type: string
+                description: Validation error message
+                example: "field required"
+              type:
+                type: string
+                description: Error type
+                example: "value_error.missing"

@@ -1,0 +1,38 @@
+# TaskMaster Pro - Docker Compose Configuration
+# Generated with GitHub Copilot assistance
+# Local development environment with MySQL database
+# For production, use Azure Database for MySQL Flexible Server (Constitution Principle I)
+
+version: '3.8'
+
+services:
+  # MySQL database for local development
+  mysql:
+    image: mysql:8.0
+    container_name: taskmaster-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: taskmaster
+      MYSQL_USER: taskuser
+      MYSQL_PASSWORD: taskpass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - taskmaster-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpass"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  # Persistent volume for MySQL data
+  mysql_data:
+    driver: local
+
+networks:
+  taskmaster-network:
+    driver: bridge

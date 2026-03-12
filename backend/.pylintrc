@@ -1,0 +1,59 @@
+# TaskMaster Pro - Backend Pylint Configuration
+# Generated with GitHub Copilot assistance
+# Code quality enforcement per Constitution Principle III
+
+[MAIN]
+# Python version
+py-version=3.11
+
+# Ignore patterns
+ignore=CVS,
+       .git,
+       __pycache__,
+       .pytest_cache,
+       htmlcov,
+       dist,
+       build
+
+# Ignore paths
+ignore-paths=^(.*/)?(migrations|tests)/.*$
+
+[MESSAGES CONTROL]
+# Disable specific warnings (allow Copilot-generated code patterns)
+disable=missing-module-docstring,
+        missing-class-docstring,
+        missing-function-docstring,
+        too-few-public-methods,
+        fixme
+
+[FORMAT]
+# Maximum line length
+max-line-length=100
+
+# Indentation
+indent-string='    '
+indent-after-paren=4
+
+[BASIC]
+# Naming conventions
+good-names=i,j,k,ex,_,id,db
+
+# Argument names
+argument-rgx=[a-z_][a-z0-9_]{1,30}$
+
+# Variable names
+variable-rgx=[a-z_][a-z0-9_]{1,30}$
+
+[DESIGN]
+# Complexity limits
+max-args=7
+max-locals=15
+max-returns=6
+max-branches=12
+max-statements=50
+
+[SIMILARITIES]
+# Duplicate code detection
+min-similarity-lines=4
+ignore-comments=yes
+ignore-docstrings=yes

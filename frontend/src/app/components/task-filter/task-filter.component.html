@@ -1,0 +1,27 @@
+<!--
+  TaskMaster Pro - Task Filter Template
+  Generated with GitHub Copilot assistance
+  Touch-friendly filter buttons with mobile-first design
+  Constitution: Mobile-First Design (Principle III), Accessibility (Principle VI)
+-->
+
+<div class="bg-white rounded-lg shadow-md p-4 mb-6">
+  <h2 class="text-sm font-semibold text-gray-700 mb-3">Filter by Status</h2>
+  
+  <div 
+    class="grid grid-cols-2 xs:grid-cols-4 gap-2"
+    role="group"
+    aria-label="Filter tasks by status"
+  >
+    <button
+      *ngFor="let option of filterOptions"
+      type="button"
+      [ngClass]="getButtonClass(option.value)"
+      (click)="onFilterClick(option.value)"
+      [attr.aria-pressed]="isActive(option.value)"
+      [attr.aria-label]="'Show ' + option.label.toLowerCase() + ' tasks'"
+    >
+      {{ option.label }}
+    </button>
+  </div>
+</div>

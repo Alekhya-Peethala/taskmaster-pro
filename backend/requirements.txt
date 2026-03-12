@@ -1,0 +1,43 @@
+# TaskMaster Pro - Backend Requirements
+# Generated with GitHub Copilot assistance
+# Date: 2026-03-12
+
+# ============================================================================
+# Web Framework & Server
+# ============================================================================
+fastapi==0.109.0          # Modern async web framework with auto OpenAPI generation
+uvicorn[standard]==0.27.0 # ASGI server with auto-reload for development
+python-multipart==0.0.9   # Form data parsing for FastAPI
+
+# ============================================================================
+# Data Validation & Serialization
+# ============================================================================
+pydantic==2.6.0           # Data validation with TypeScript-style typing
+pydantic-settings==2.1.0  # Environment variable management
+
+# ============================================================================
+# Database & ORM
+# ============================================================================
+sqlalchemy==2.0.25        # SQL toolkit and ORM with async support
+alembic==1.13.1           # Database migration tool for SQLAlchemy
+mysql-connector-python==8.3.0  # MySQL driver for Python
+
+# ============================================================================
+# Testing
+# ============================================================================
+pytest==8.0.0             # Testing framework
+pytest-cov==4.1.0         # Code coverage plugin for pytest
+pytest-asyncio==0.23.4    # Async test support for pytest
+httpx==0.26.0             # HTTP client for testing FastAPI endpoints
+
+# ============================================================================
+# Code Quality
+# ============================================================================
+pylint==3.0.3             # Python linter for code quality
+black==24.1.1             # Code formatter for consistent style
+mypy==1.8.0               # Static type checker
+
+# ============================================================================
+# Utilities
+# ============================================================================
+python-dotenv==1.0.1      # Load environment variables from .env files
