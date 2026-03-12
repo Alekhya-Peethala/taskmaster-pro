@@ -88,7 +88,8 @@ def get_db() -> Generator[Session, None, None]:
             # Use db session here
             pass
     """
-    db = get_session_local()()
+    session_factory = get_session_local()
+    db = session_factory()
     try:
         yield db
     finally:
