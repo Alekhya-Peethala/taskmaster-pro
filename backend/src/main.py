@@ -5,6 +5,7 @@ Main application configuration with CORS middleware and route registration
 Constitution: Azure-Native Architecture (Principle I), API Contract Compliance (Principle V)
 """
 
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
@@ -13,14 +14,29 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
+
+@asynccontextmanager
+async def lifespan(application: FastAPI):
+    """
+    Application lifespan event handler.
+    Handles startup and shutdown events using the modern lifespan pattern.
+    """
+    # Startup
+    print("TaskMaster Pro API starting up...")
+    yield
+    # Shutdown
+    print("TaskMaster Pro API shutting down...")
+
+
 # Create FastAPI application instance
 app = FastAPI(
     title="TaskMaster Pro API",
     description="RESTful API for task management with CRUD operations and status filtering",
     version="1.0.0",
-    docs_url="/api/docs",          # Swagger UI at /api/docs
-    redoc_url="/api/redoc",         # ReDoc at /api/redoc
-    openapi_url="/api/openapi.json" # OpenAPI schema at /api/openapi.json
+    docs_url="/api/docs",           # Swagger UI at /api/docs
+    redoc_url="/api/redoc",          # ReDoc at /api/redoc
+    openapi_url="/api/openapi.json",  # OpenAPI schema at /api/openapi.json
+    lifespan=lifespan,
 )
 
 # CORS Configuration
@@ -38,6 +54,10 @@ app.add_middleware(
     allow_headers=["*"],  # Allow all headers
 )
 
+# Register global exception handlers
+from src.middleware.error_handler import register_exception_handlers
+register_exception_handlers(app)
+
 
 # Root health check endpoint
 @app.get("/")
@@ -53,30 +73,6 @@ async def root():
     }
 
 
-# Application lifecycle events
-@app.on_event("startup")
-async def startup_event():
-    """
-    Application startup event handler.
-    Performs initialization tasks when the app starts.
-    """
-    # TODO: Initialize database connection pool
-    # TODO: Verify database connection
-    # TODO: Run database migrations (if auto-migrate enabled)
-    print("TaskMaster Pro API starting up...")
-
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    """
-    Application shutdown event handler.
-    Performs cleanup tasks when the app shuts down.
-    """
-    # TODO: Close database connections
-    # TODO: Cleanup resources
-    print("TaskMaster Pro API shutting down...")
-
-
 # Register API routers
 from src.api import tasks
 app.include_router(tasks.router, prefix="/api", tags=["tasks"])
@@ -84,7 +80,7 @@ app.include_router(tasks.router, prefix="/api", tags=["tasks"])
 
 if __name__ == "__main__":
     import uvicorn
-    
+
     # Run the application with uvicorn
     # Development mode with auto-reload
     uvicorn.run(

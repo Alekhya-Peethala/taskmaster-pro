@@ -42,23 +42,31 @@ async def validation_exception_handler(
 ) -> JSONResponse:
     """
     Handle Pydantic validation errors with detailed field-level errors.
-    
+
     Args:
         request: FastAPI request object
         exc: Pydantic validation exception
-        
+
     Returns:
         JSONResponse with validation error details
     """
     logger.warning(
         f"Validation error on {request.method} {request.url.path}: {exc.errors()}"
     )
-    
+
+    # Convert to JSON-safe format – ctx values may contain non-serializable objects
+    safe_errors = []
+    for error in exc.errors():
+        safe_error = {k: v for k, v in error.items() if k != "ctx"}
+        if "ctx" in error:
+            safe_error["ctx"] = {k: str(v) for k, v in error["ctx"].items()}
+        # Remove the url field (only useful for developers, not API consumers)
+        safe_error.pop("url", None)
+        safe_errors.append(safe_error)
+
     return JSONResponse(
         status_code=status.HTTP_400_BAD_REQUEST,
-        content={
-            "detail": exc.errors()
-        }
+        content={"detail": safe_errors},
     )
 
 

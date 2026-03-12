@@ -27,7 +27,7 @@ mysql-connector-python==8.3.0  # MySQL driver for Python
 # ============================================================================
 pytest==8.0.0             # Testing framework
 pytest-cov==4.1.0         # Code coverage plugin for pytest
-pytest-asyncio==0.23.4    # Async test support for pytest
+pytest-asyncio==0.23.5    # Async test support for pytest
 httpx==0.26.0             # HTTP client for testing FastAPI endpoints
 
 # ============================================================================
