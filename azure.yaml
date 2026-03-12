@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+# TaskMaster Pro - Azure Developer CLI (azd) manifest
+# All paths are relative to the repository root; no host-specific paths.
+
+name: taskmaster-pro
+
+services:
+  backend:
+    project: ./backend
+    language: py
+    host: containerapp
+    docker:
+      path: ./backend/Dockerfile
+      context: ./backend
+    hooks:
+      prepackage:
+        posix:
+          shell: sh
+          run: ./hooks/prepackage.sh
+          interactive: false
+          continueOnError: false
