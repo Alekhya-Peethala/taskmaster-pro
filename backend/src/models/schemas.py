@@ -5,7 +5,7 @@ Data validation and serialization schemas for API request/response
 Constitution: API Contract Compliance (Principle V), TypeScript-style typing
 """
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 from datetime import date, datetime
 from typing import Literal
 
@@ -44,23 +44,12 @@ class TaskBase(BaseModel):
         ...,
         description="Current state of the task"
     )
-    
-    @field_validator('due_date')
-    @classmethod
-    def validate_due_date(cls, v: date) -> date:
-        """
-        Validate that due_date is not in the past.
-        Allow today and future dates only.
-        """
-        if v < date.today():
-            raise ValueError('Due date cannot be in the past')
-        return v
 
 
 class TaskCreate(TaskBase):
     """
     Schema for creating a new task (POST /api/tasks).
-    Inherits all fields from TaskBase.
+    Inherits all fields from TaskBase, adds past-date guard.
     
     Example:
         {
@@ -71,7 +60,16 @@ class TaskCreate(TaskBase):
             "status": "Pending"
         }
     """
-    pass
+    @field_validator('due_date')
+    @classmethod
+    def validate_due_date(cls, v: date) -> date:
+        """
+        Validate that due_date is not in the past.
+        Allow today and future dates only.
+        """
+        if v < date.today():
+            raise ValueError('Due date cannot be in the past')
+        return v
 
 
 class TaskUpdate(BaseModel):
@@ -122,9 +120,7 @@ class TaskResponse(TaskBase):
     created_at: datetime
     updated_at: datetime
     
-    class Config:
-        """Pydantic configuration to enable ORM mode for SQLAlchemy models."""
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class TaskStatusUpdate(BaseModel):
